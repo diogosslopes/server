@@ -23,6 +23,8 @@ app.get("/", (req, res) => {
     res.send("Hello World")
 })
 
+
+
 app.get("/getTasks", (req, res) => {
 
     let SQL = "SELECT * from tasks where isConcluded = 0"
@@ -205,6 +207,20 @@ app.post("/filtertask", (req, res) => {
     db.query(SQL, [type], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
+    })
+})
+
+app.post("/orderBy", (req, res) => {
+    const { order } = req.body
+    const { table } = req.body
+
+    let SQL = "select * from completedtasks order by ?"
+
+    
+    db.query(SQL, [ order], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+        console.log(SQL)
     })
 })
 
