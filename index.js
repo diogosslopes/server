@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 
 app.get("/getTasks", (req, res) => {
 
-    let SQL = "SELECT * from tasks"
+    let SQL = "SELECT * from tasks where isConcluded = 0"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
