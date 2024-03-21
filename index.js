@@ -43,35 +43,35 @@ app.post("/registeruser", (req, res) => {
     let SQLINSERT = "INSERT INTO users(adress, email, name, password) VALUES(?,?,?,?)"
     let SQL = "select * from users where email = ?"
 
-    db.query(SQLINSERT, [adress, email, name, password], (err, result) => {
-        if (err) console.log(err)
-        else {
-            res.send(result)
-            console.log(req.body)
-        }
-    })
-
-    // db.query(SQL, [email, password], (err, result) => {
-    //     if (err) {
-    //         console.log(err)
-    //     } else {
-    //         console.log(result.length)
-    //         if (result.length == 0) {
-    //             bcrypt.hash(password, saltRounds, (err, hash) => {
-    //                 console.log(password)
-    //                 console.log(hash)
-    //                 db.query(SQLINSERT, [adress, email, name, hash], (err, result) => {
-    //                     if (err) console.log(err)
-    //                     else res.send(result)
-    //                     // console.log(req.body)
-    //                 })
-
-    //             })
-    //         } else {
-    //             res.send({ msg: "cadastrado" })
-    //         }
+    // db.query(SQLINSERT, [adress, email, name, password], (err, result) => {
+    //     if (err) console.log(err)
+    //     else {
+    //         res.send(result)
+    //         console.log(req.body)
     //     }
     // })
+
+    db.query(SQL, [email, password], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(result.length)
+            if (result.length == 0) {
+                bcrypt.hash(password, saltRounds, (err, hash) => {
+                    console.log(password)
+                    console.log(hash)
+                    db.query(SQLINSERT, [adress, email, name, hash], (err, result) => {
+                        if (err) console.log(err)
+                        else res.send(result)
+                        // console.log(req.body)
+                    })
+
+                })
+            } else {
+                res.send({ msg: "cadastrado" })
+            }
+        }
+    })
 })
 app.listen(3001, () => {
     console.log("Rodandooo")
