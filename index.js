@@ -388,3 +388,13 @@ app.delete("/deleteobs/:taskId", (req, res) => {
         else res.send(result)
     })
 })
+
+app.delete("/deleteClient/:clientId", (req, res) => {
+    const { clientId } = req.params
+    let SQL = "delete from users where clientId = ?"
+
+    db.query(SQL, [clientId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
