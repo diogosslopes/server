@@ -355,6 +355,20 @@ app.put("/editTask", (req, res) => {
     })
 })
 
+app.put("/editClient", (req, res) => {
+    const { clientId } = req.body
+    const { name } = req.body
+    const { adress } = req.body
+
+
+    let SQL = "update users set name = ?, adress = ? where clientId = ? "
+
+    db.query(SQL, [name, adress, clientId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.delete("/deletetask/:taskId", (req, res) => {
     const { taskId } = req.params
     let SQL = "delete from tasks where taskId = ?"
