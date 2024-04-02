@@ -27,11 +27,39 @@ app.get("/", (req, res) => {
 
 app.get("/getTasks", (req, res) => {
 
-    let SQL = "SELECT * from tasks where isConcluded = 0"
+    let SQL = "SELECT * from tasks where isConcluded = 0 LIMIT 2"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
         else res.send(result)
+    })
+})
+
+app.post("/getMoreTasks", (req, res) => {
+
+    const { taskId } = req.body
+
+    let SQL = "SELECT * from tasks where isConcluded = 0 and taskId > ? LIMIT 2"
+
+    db.query(SQL, [taskId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+
+        // console.log(taskId)
+    })
+})
+
+app.post("/getMoreCompletedTasks", (req, res) => {
+
+    const { taskId } = req.body
+
+    let SQL = "SELECT * from completedtasks where taskId > ? LIMIT 2"
+
+    db.query(SQL, [taskId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+
+        // console.log(taskId)
     })
 })
 
@@ -75,6 +103,7 @@ app.post("/registeruser", (req, res) => {
         }
     })
 })
+
 app.listen(3001, () => {
     console.log("Rodandooo")
 })
@@ -295,7 +324,7 @@ app.get("/getLastTask", (req, res) => {
 
 app.get("/getCompletedTasks", (req, res) => {
 
-    let SQL = "SELECT * from completedtasks"
+    let SQL = "SELECT * from completedtasks LIMIT 2"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
