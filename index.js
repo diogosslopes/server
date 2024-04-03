@@ -63,11 +63,25 @@ app.post("/getPreviousTasks", (req, res) => {
     })
 })
 
-app.post("/getMoreCompletedTasks", (req, res) => {
+app.post("/getNextCompletedTasks", (req, res) => {
 
     const { taskId } = req.body
 
     let SQL = "SELECT * from completedtasks where taskId > ? LIMIT 2"
+
+    db.query(SQL, [taskId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+
+        // console.log(taskId)
+    })
+})
+
+app.post("/getPreviousCompletedTasks", (req, res) => {
+
+    const { taskId } = req.body
+
+    let SQL = "SELECT * from completedtasks where taskId < ? LIMIT 2"
 
     db.query(SQL, [taskId], (err, result) => {
         if (err) console.log(err)
