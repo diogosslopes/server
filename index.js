@@ -96,9 +96,10 @@ app.post("/registeruser", (req, res) => {
     const { email } = req.body
     const { adress } = req.body
     const { password } = req.body
+    const { emailToken } = req.body
 
 
-    let SQLINSERT = "INSERT INTO users(adress, email, name, password) VALUES(?,?,?,?)"
+    let SQLINSERT = "INSERT INTO users(adress, email, name, password, emailToken) VALUES(?,?,?,?,?)"
     let SQL = "select * from users where email = ?"
 
     // db.query(SQLINSERT, [adress, email, name, password], (err, result) => {
@@ -118,7 +119,7 @@ app.post("/registeruser", (req, res) => {
                 bcrypt.hash(password, saltRounds, (err, hash) => {
                     console.log(password)
                     console.log(hash)
-                    db.query(SQLINSERT, [adress, email, name, hash], (err, result) => {
+                    db.query(SQLINSERT, [adress, email, name, hash, emailToken], (err, result) => {
                         if (err) console.log(err)
                         else res.send(result)
                         // console.log(req.body)
