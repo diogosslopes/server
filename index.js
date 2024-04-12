@@ -23,7 +23,78 @@ app.get("/", (req, res) => {
     res.send("Hello World")
 })
 
+app.post("/confirmUser", (req, res) => {
+    const { email } = req.body
+    const { emailToken } = req.body
 
+    console.log(email)
+
+    let SQLCONFIRM = "update users set isVerified = 1 where email = ? "
+    let SQL = "select emailToken from users where email = ?"
+
+    db.query(SQL, [email], (err, result) => {
+        if (err) console.log(err)
+        else {
+            // console.log(result)
+            bcrypt.compare(emailToken, result[0].emailToken, (err, resultCompare) => {
+                if (resultCompare === true) {
+                    db.query(SQLCONFIRM, [email], (err, resultVerified) => {
+                        if (err) console.log(err)
+                        else {
+                            console.log(resultVerified)
+                            res.send(resultCompare)
+                        }
+                    })
+                } else {
+                    res.send(result)
+                }
+            })
+        }
+    })
+})
+
+app.post("/resendConfirmation", (req, res) => {
+    const { email } = req.body
+    const { emailToken } = req.body
+
+    const SQL = 'update users set emailToken = ? where email = ?'
+
+    bcrypt.hash(emailToken, saltRounds, (err, hash) => {
+        if (err) console.log(err)
+        else {
+            db.query(SQL, [hash, email], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    console.log(hash)
+                    console.log(emailToken)
+                    res.send(result)
+                }
+            })
+        }
+
+    })
+})
+
+app.post("/changePassword", (req, res) => {
+    const { email } = req.body
+    const { password } = req.body
+
+    const SQL = 'update users set password = ? where email = ?'
+
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+        if (err) console.log("err")
+        else {
+            db.query(SQL, [hash, email], (err, result) => {
+                if (err) console.log("err2")
+                else {
+                    console.log(hash)
+                    res.send(result)
+                }
+            })
+        }
+
+    })
+})
 
 app.get("/getTasks", (req, res) => {
 
@@ -102,27 +173,23 @@ app.post("/registeruser", (req, res) => {
     let SQLINSERT = "INSERT INTO users(adress, email, name, password, emailToken) VALUES(?,?,?,?,?)"
     let SQL = "select * from users where email = ?"
 
-    // db.query(SQLINSERT, [adress, email, name, password], (err, result) => {
-    //     if (err) console.log(err)
-    //     else {
-    //         res.send(result)
-    //         console.log(req.body)
-    //     }
-    // })
-
-    db.query(SQL, [email, password], (err, result) => {
+    db.query(SQL, [email, password, emailToken], (err, result) => {
         if (err) {
             console.log(err)
         } else {
             console.log(result.length)
             if (result.length == 0) {
+                console.log(emailToken)
                 bcrypt.hash(password, saltRounds, (err, hash) => {
                     console.log(password)
-                    console.log(hash)
-                    db.query(SQLINSERT, [adress, email, name, hash, emailToken], (err, result) => {
-                        if (err) console.log(err)
-                        else res.send(result)
-                        // console.log(req.body)
+                    bcrypt.hash(emailToken, saltRounds, (err, hashToken) => {
+                        console.log(hash)
+                        console.log(hashToken)
+                        db.query(SQLINSERT, [adress, email, name, hash, hashToken], (err, result) => {
+                            if (err) console.log(err)
+                            else res.send(result)
+                            // console.log(req.body)
+                        })
                     })
 
                 })
@@ -274,8 +341,8 @@ app.post("/orderBy", (req, res) => {
 
     let SQL = "select * from completedtasks order by ?"
 
-    
-    db.query(SQL, [ order], (err, result) => {
+
+    db.query(SQL, [order], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
         console.log(SQL)
