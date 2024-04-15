@@ -98,11 +98,14 @@ app.post("/changePassword", (req, res) => {
 
 app.get("/getTasks", (req, res) => {
 
-    let SQL = "SELECT * from tasks where isConcluded = 0 LIMIT 2"
+    let SQL = "SELECT * from tasks where isConcluded = 0 LIMIT 10"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
-        else res.send(result)
+        else {
+            console.log("TASK")
+            res.send(result)
+        }
     })
 })
 
@@ -110,7 +113,7 @@ app.post("/getNextTasks", (req, res) => {
 
     const { taskId } = req.body
 
-    let SQL = "SELECT * from tasks where isConcluded = 0 and taskId > ? LIMIT 2"
+    let SQL = "SELECT * from tasks where isConcluded = 0 and taskId > ? LIMIT 10"
 
     db.query(SQL, [taskId], (err, result) => {
         if (err) console.log(err)
@@ -124,9 +127,9 @@ app.post("/getPreviousTasks", (req, res) => {
 
     const { taskId } = req.body
 
-    let SQL = "SELECT * from tasks where isConcluded = 0 and taskId < ? LIMIT 2"
+    let SQL = "SELECT * from tasks where isConcluded = 0 and taskId >= ? -10 and taskId < ? LIMIT 10"
 
-    db.query(SQL, [taskId], (err, result) => {
+    db.query(SQL, [taskId, taskId], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
 
@@ -152,7 +155,7 @@ app.post("/getPreviousCompletedTasks", (req, res) => {
 
     const { taskId } = req.body
 
-    let SQL = "SELECT * from completedtasks where taskId < ? LIMIT 2"
+    let SQL = "SELECT * from completedtasks where taskId < ? LIMIT 10"
 
     db.query(SQL, [taskId], (err, result) => {
         if (err) console.log(err)
@@ -275,6 +278,8 @@ app.post("/registertask", (req, res) => {
     const { type } = req.body
     const { userEmail } = req.body
     const { userId } = req.body
+
+    console.log(req.body)
 
     let SQL = "INSERT INTO tasks(client, created, obs, priority, status, subject, taskImages, type, userEmail, userId) VALUES(?,?,?,?,?,?,?,?,?,?)"
 
@@ -420,7 +425,7 @@ app.get("/getLastTask", (req, res) => {
 
 app.get("/getCompletedTasks", (req, res) => {
 
-    let SQL = "SELECT * from completedtasks LIMIT 2"
+    let SQL = "SELECT * from completedtasks LIMIT 10"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
