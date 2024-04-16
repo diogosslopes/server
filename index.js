@@ -19,8 +19,27 @@ app.use(express.json())
 
 
 
-app.get("/", (req, res) => {
-    res.send("Hello World")
+app.get("/getTaskTypes", (req, res) => {
+
+    const SQL = "select * from taskTypes"
+
+    db.query(SQL, (err, result)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.post("/registerTaskType", (req, res) => {
+
+    const { taskType } = req.body
+    console.log(taskType)
+
+    const SQL = "INSERT INTO taskTypes(taskType) VALUES(?)"
+
+    db.query(SQL, [taskType], (err, result)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
 })
 
 app.post("/confirmUser", (req, res) => {
@@ -499,6 +518,20 @@ app.put("/editClient", (req, res) => {
     })
 })
 
+app.put("/editTaskType", (req, res) => {
+    const { id } = req.body
+    const { taskType } = req.body
+    
+
+
+    let SQL = "update taskTypes set taskType = ? where id = ? "
+
+    db.query(SQL, [taskType, id], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.delete("/deletetask/:taskId", (req, res) => {
     const { taskId } = req.params
     let SQL = "delete from tasks where taskId = ?"
@@ -524,6 +557,17 @@ app.delete("/deleteClient/:clientId", (req, res) => {
     let SQL = "delete from users where clientId = ?"
 
     db.query(SQL, [clientId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.delete("/deleteTaskType/:id", (req, res) => {
+    const { id } = req.params
+    let SQL = "delete from taskTypes where id = ?"
+    console.log(id)
+
+    db.query(SQL, [id], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
     })
