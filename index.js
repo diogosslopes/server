@@ -29,6 +29,26 @@ app.get("/getTaskTypes", (req, res) => {
     })
 })
 
+app.get("/getStatus", (req, res) => {
+
+    const SQL = "select * from status"
+
+    db.query(SQL, (err, result)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.get("/getSubjects", (req, res) => {
+
+    const SQL = "select * from subjects"
+
+    db.query(SQL, (err, result)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.post("/registerTaskType", (req, res) => {
 
     const { taskType } = req.body
@@ -37,6 +57,35 @@ app.post("/registerTaskType", (req, res) => {
     const SQL = "INSERT INTO taskTypes(taskType) VALUES(?)"
 
     db.query(SQL, [taskType], (err, result)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.post("/registerStatus", (req, res) => {
+
+    const { status } = req.body
+
+    console.log(status)
+
+    const SQL = "INSERT INTO status (status) VALUES(?)"
+
+    db.query(SQL, [status], (err, result)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.post("/registerSubject", (req, res) => {
+
+    const { subject } = req.body
+    const { taskType } = req.body
+
+    console.log(subject)
+
+    const SQL = "INSERT INTO subjects (subject, taskType) VALUES(?,?)"
+
+    db.query(SQL, [subject, taskType], (err, result)=>{
         if(err) console.log(err)
         else res.send(result)
     })
@@ -532,6 +581,32 @@ app.put("/editTaskType", (req, res) => {
     })
 })
 
+app.put("/editStatus", (req, res) => {
+    const { id } = req.body
+    const { status } = req.body
+    
+
+    let SQL = "update status set status = ? where id = ? "
+
+    db.query(SQL, [status, id], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.put("/editSubject", (req, res) => {
+    const { id } = req.body
+    const { subject } = req.body
+    
+
+    let SQL = "update subjects set subject = ? where id = ? "
+
+    db.query(SQL, [subject, id], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.delete("/deletetask/:taskId", (req, res) => {
     const { taskId } = req.params
     let SQL = "delete from tasks where taskId = ?"
@@ -565,6 +640,28 @@ app.delete("/deleteClient/:clientId", (req, res) => {
 app.delete("/deleteTaskType/:id", (req, res) => {
     const { id } = req.params
     let SQL = "delete from taskTypes where id = ?"
+    console.log(id)
+
+    db.query(SQL, [id], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.delete("/deleteStatus/:id", (req, res) => {
+    const { id } = req.params
+    let SQL = "delete from status where id = ?"
+    console.log(id)
+
+    db.query(SQL, [id], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.delete("/deleteSubject/:id", (req, res) => {
+    const { id } = req.params
+    let SQL = "delete from subjects where id = ?"
     console.log(id)
 
     db.query(SQL, [id], (err, result) => {
