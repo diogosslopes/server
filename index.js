@@ -7,10 +7,10 @@ const saltRounds = 10
 
 
 const db = mysql.createPool({
-    host: "179.188.16.167",
-    user: "chamadosfacil",
+    host: "186.202.152.33",
+    user: "chamadost3ste",
     password: "Centr0#3127",
-    database: "chamadosfacil"
+    database: "chamadost3ste"
 })
 
 app.use(cors())
