@@ -22,6 +22,13 @@ app.listen(3002, () => {
 })
 
 
+app.get("/", (req, res) => {
+
+    res.send("Hello Wolrd")
+
+
+})
+
 app.get("/getTaskTypes", (req, res) => {
 
     const SQL = "select * from taskTypes"
