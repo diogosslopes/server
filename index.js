@@ -17,6 +17,9 @@ app.use(cors())
 
 app.use(express.json())
 
+app.listen(3002, () => {
+    console.log("Rodandooo")
+})
 
 
 app.get("/getTaskTypes", (req, res) => {
@@ -271,9 +274,6 @@ app.post("/registeruser", (req, res) => {
     })
 })
 
-app.listen(3001, () => {
-    console.log("Rodandooo")
-})
 
 app.post("/updateUser", (req, res) => {
     const { avatar } = req.body
