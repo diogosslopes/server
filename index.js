@@ -500,7 +500,7 @@ app.get("/getLastTask", (req, res) => {
 
 app.get("/getCompletedTasks", (req, res) => {
 
-    let SQL = "SELECT * from completedtasks LIMIT 10"
+    let SQL = "SELECT * from tasks where isConcluded = 1 LIMIT 10"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
@@ -530,11 +530,12 @@ app.get("/getObsList", (req, res) => {
 
 app.put("/editTaskConcluded", (req, res) => {
     const { taskId } = req.body
+    const { concluded } = req.body
 
 
-    let SQL = "update tasks set isConcluded = 1 where taskId = ? "
+    let SQL = "update tasks set isConcluded = 1, concluded = ? where taskId = ? "
 
-    db.query(SQL, [taskId], (err, result) => {
+    db.query(SQL, [concluded, taskId], (err, result) => {
         if (err) console.log(err)
         else {
             res.send(result)
