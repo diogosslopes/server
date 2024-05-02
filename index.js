@@ -6,18 +6,29 @@ const bcrypt = require("bcrypt")
 const saltRounds = 10
 
 
+// const db = mysql.createPool({
+//    host: "186.202.152.33",
+//    user: "chamadost3ste",
+//    password: "Centr0#3127",
+//    database: "chamadost3ste"
+// })
+
+// app.listen(3001, () => {
+//    console.log("Rodandooo")
+// })
+
 const db = mysql.createPool({
-    host: "186.202.152.33",
-    user: "chamadost3ste",
+    host: "179.188.16.167",
+    user: "chamadosfacil",
     password: "Centr0#3127",
-    database: "chamadost3ste"
+    database: "chamadosfacil"
 })
 
 app.use(cors())
 
 app.use(express.json())
 
-app.listen(3002, () => {
+app.listen(3001, () => {
     console.log("Rodandooo")
 })
 
