@@ -7,17 +7,27 @@ const saltRounds = 10
 
 
 const db = mysql.createPool({
-    host: "179.188.16.167",
-    user: "chamadosfacil",
+    host: "186.202.152.33",
+    user: "chamadost3ste",
     password: "Centr0#3127",
-    database: "chamadosfacil"
+    database: "chamadost3ste"
 })
 
 app.use(cors())
 
 app.use(express.json())
 
+app.listen(3002, () => {
+    console.log("Rodandooo")
+})
 
+
+app.get("/", (req, res) => {
+
+    res.send("Hello Wolrd")
+
+
+})
 
 app.get("/getTaskTypes", (req, res) => {
 
@@ -271,9 +281,6 @@ app.post("/registeruser", (req, res) => {
     })
 })
 
-app.listen(3001, () => {
-    console.log("Rodandooo")
-})
 
 app.post("/updateUser", (req, res) => {
     const { avatar } = req.body
@@ -493,7 +500,7 @@ app.get("/getLastTask", (req, res) => {
 
 app.get("/getCompletedTasks", (req, res) => {
 
-    let SQL = "SELECT * from completedtasks LIMIT 10"
+    let SQL = "SELECT * from tasks where isConcluded = 1 LIMIT 10"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
@@ -523,11 +530,12 @@ app.get("/getObsList", (req, res) => {
 
 app.put("/editTaskConcluded", (req, res) => {
     const { taskId } = req.body
+    const { concluded } = req.body
 
 
-    let SQL = "update tasks set isConcluded = 1 where taskId = ? "
+    let SQL = "update tasks set isConcluded = 1, concluded = ? where taskId = ? "
 
-    db.query(SQL, [taskId], (err, result) => {
+    db.query(SQL, [concluded, taskId], (err, result) => {
         if (err) console.log(err)
         else {
             res.send(result)
