@@ -7,15 +7,17 @@ const saltRounds = 10
 
 
 // const db = mysql.createPool({
-//    host: "186.202.152.33",
-//    user: "chamadost3ste",
-//    password: "Centr0#3127",
-//    database: "chamadost3ste"
+//     host: "186.202.152.33",
+//     user: "chamadost3ste",
+//     password: "Centr0#3127",
+//     database: "chamadost3ste"
 // })
 
-// app.listen(3001, () => {
-//    console.log("Rodandooo")
+
+// app.listen(3002, () => {
+//     console.log("Rodandooo")
 // })
+
 
 const db = mysql.createPool({
     host: "179.188.16.167",
@@ -24,28 +26,110 @@ const db = mysql.createPool({
     database: "chamadosfacil"
 })
 
-app.use(cors())
-
-app.use(express.json())
-
 app.listen(3001, () => {
     console.log("Rodandooo")
 })
+
+app.use(cors())
+
+app.use(express.json())
 
 
 app.get("/", (req, res) => {
 
     res.send("Hello Wolrd")
 
+})
 
+app.post("/getReport", (req, res) => {
+
+    const { taskType } = req.body
+    const { dateIni } = req.body
+    const { dateFin } = req.body
+    const { status } = req.body
+    const { unity } = req.body
+    const { caseNumber } = req.body
+
+    let SQL = 'select * from tasks where type = ? and status = ? and client = ?'
+
+    switch (caseNumber) {
+        case 1:
+
+            db.query(SQL, [taskType, status, unity], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
+            break
+
+        case 2:
+            SQL = 'select * from tasks where type = ? and client = ?'
+
+            db.query(SQL, [taskType, unity], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
+            break
+
+        case 3:
+            SQL = 'select * from tasks where client = ? and status = ?'
+
+            db.query(SQL, [unity, status], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
+            break
+
+        case 4:
+            SQL = 'select * from tasks where type = ? and status = ?'
+
+            db.query(SQL, [taskType, status], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
+            break
+
+        case 5:
+            SQL = 'select * from tasks where client = ?'
+
+            db.query(SQL, [unity], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
+            break
+
+        case 6:
+            SQL = 'select * from tasks where status = ?'
+
+            db.query(SQL, [status], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
+            break
+
+        case 7:
+            SQL = 'select * from tasks where type = ?'
+
+            db.query(SQL, [taskType], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
+            break
+    }
+
+    // const SQL = 'select * from tasks where taskType = ? and status = ? and unity = ?'
+
+    // db.query(SQL, [taskType, status, unity], (err, result)=>{
+    //     if(err) console.log(err)
+    //     else res.send(result)
+    // })
 })
 
 app.get("/getTaskTypes", (req, res) => {
 
     const SQL = "select * from taskTypes"
 
-    db.query(SQL, (err, result)=>{
-        if(err) console.log(err)
+    db.query(SQL, (err, result) => {
+        if (err) console.log(err)
         else res.send(result)
     })
 })
@@ -54,8 +138,8 @@ app.get("/getStatus", (req, res) => {
 
     const SQL = "select * from status"
 
-    db.query(SQL, (err, result)=>{
-        if(err) console.log(err)
+    db.query(SQL, (err, result) => {
+        if (err) console.log(err)
         else res.send(result)
     })
 })
@@ -64,8 +148,8 @@ app.get("/getSubjects", (req, res) => {
 
     const SQL = "select * from subjects"
 
-    db.query(SQL, (err, result)=>{
-        if(err) console.log(err)
+    db.query(SQL, (err, result) => {
+        if (err) console.log(err)
         else res.send(result)
     })
 })
@@ -77,8 +161,8 @@ app.post("/registerTaskType", (req, res) => {
 
     const SQL = "INSERT INTO taskTypes(taskType) VALUES(?)"
 
-    db.query(SQL, [taskType], (err, result)=>{
-        if(err) console.log(err)
+    db.query(SQL, [taskType], (err, result) => {
+        if (err) console.log(err)
         else res.send(result)
     })
 })
@@ -91,8 +175,8 @@ app.post("/registerStatus", (req, res) => {
 
     const SQL = "INSERT INTO status (status) VALUES(?)"
 
-    db.query(SQL, [status], (err, result)=>{
-        if(err) console.log(err)
+    db.query(SQL, [status], (err, result) => {
+        if (err) console.log(err)
         else res.send(result)
     })
 })
@@ -106,8 +190,8 @@ app.post("/registerSubject", (req, res) => {
 
     const SQL = "INSERT INTO subjects (subject, taskType) VALUES(?,?)"
 
-    db.query(SQL, [subject, taskType], (err, result)=>{
-        if(err) console.log(err)
+    db.query(SQL, [subject, taskType], (err, result) => {
+        if (err) console.log(err)
         else res.send(result)
     })
 })
@@ -230,7 +314,7 @@ app.post("/getNextCompletedTasks", (req, res) => {
 
     const { taskId } = req.body
 
-    let SQL = "SELECT * from completedtasks where taskId > ? LIMIT 2"
+    let SQL = "SELECT * from tasks where isConcluded = 1 and taskId > ? LIMIT 2"
 
     db.query(SQL, [taskId], (err, result) => {
         if (err) console.log(err)
@@ -244,7 +328,7 @@ app.post("/getPreviousCompletedTasks", (req, res) => {
 
     const { taskId } = req.body
 
-    let SQL = "SELECT * from completedtasks where taskId < ? LIMIT 10"
+    let SQL = "SELECT * from tasks where isConcluded = 1 and taskId < ? LIMIT 10"
 
     db.query(SQL, [taskId], (err, result) => {
         if (err) console.log(err)
@@ -589,7 +673,7 @@ app.put("/editClient", (req, res) => {
 app.put("/editTaskType", (req, res) => {
     const { id } = req.body
     const { taskType } = req.body
-    
+
 
 
     let SQL = "update taskTypes set taskType = ? where id = ? "
@@ -603,7 +687,7 @@ app.put("/editTaskType", (req, res) => {
 app.put("/editStatus", (req, res) => {
     const { id } = req.body
     const { status } = req.body
-    
+
 
     let SQL = "update status set status = ? where id = ? "
 
@@ -616,7 +700,7 @@ app.put("/editStatus", (req, res) => {
 app.put("/editSubject", (req, res) => {
     const { id } = req.body
     const { subject } = req.body
-    
+
 
     let SQL = "update subjects set subject = ? where id = ? "
 
