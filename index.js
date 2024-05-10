@@ -282,60 +282,137 @@ app.get("/getTasks", (req, res) => {
     })
 })
 
+app.post("/getUnitsTasks", (req, res) => {
+
+    const { userId } = req.body
+
+    let SQL = "SELECT * from tasks where isConcluded = 0 and userId = ? LIMIT 10"
+
+    db.query(SQL, [userId], (err, result) => {
+        if (err) console.log(err)
+        else {
+            console.log("TASK")
+            res.send(result)
+        }
+    })
+})
+
 app.post("/getNextTasks", (req, res) => {
 
     const { taskId } = req.body
+    const { userGroup } = req.body
+    const { userId } = req.body
 
     let SQL = "SELECT * from tasks where isConcluded = 0 and taskId > ? LIMIT 10"
 
-    db.query(SQL, [taskId], (err, result) => {
-        if (err) console.log(err)
-        else res.send(result)
+    if(userGroup === 'admin'){
+        db.query(SQL, [taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }else{
 
-        // console.log(taskId)
-    })
+        SQL = "SELECT * from tasks where isConcluded = 0 and userId = ? and taskId > ? LIMIT 10"
+
+        db.query(SQL, [userId, taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }
 })
 
 app.post("/getPreviousTasks", (req, res) => {
 
     const { taskId } = req.body
+    const { userGroup } = req.body
+    const { userId } = req.body
 
     let SQL = "SELECT * from tasks where isConcluded = 0 and taskId >= ? -10 and taskId < ? LIMIT 10"
 
-    db.query(SQL, [taskId, taskId], (err, result) => {
-        if (err) console.log(err)
-        else res.send(result)
+   
+    if(userGroup === 'admin'){
+ 
+        db.query(SQL, [taskId, taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }else{
 
-        // console.log(taskId)
-    })
+        SQL = "SELECT * from tasks where isConcluded = 0 and userId = ? and taskId >= ? -10 and taskId < ? LIMIT 10"
+
+        db.query(SQL, [userId, taskId, taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }
+   
+
 })
 
 app.post("/getNextCompletedTasks", (req, res) => {
 
     const { taskId } = req.body
+    const { userGroup } = req.body
+    const { userId } = req.body
 
-    let SQL = "SELECT * from tasks where isConcluded = 1 and taskId > ? LIMIT 2"
+    let SQL = "SELECT * from tasks where isConcluded = 1 and taskId > ? LIMIT 10"
 
-    db.query(SQL, [taskId], (err, result) => {
-        if (err) console.log(err)
-        else res.send(result)
+    if(userGroup === 'admin'){
+        db.query(SQL, [taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }else{
 
-        // console.log(taskId)
-    })
+        SQL = "SELECT * from tasks where isConcluded = 1 and userId = ? and taskId > ? LIMIT 10"
+
+        db.query(SQL, [userId, taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }
 })
 
 app.post("/getPreviousCompletedTasks", (req, res) => {
 
     const { taskId } = req.body
+    const { userGroup } = req.body
+    const { userId } = req.body
 
-    let SQL = "SELECT * from tasks where isConcluded = 1 and taskId < ? LIMIT 10"
+    let SQL = "SELECT * from tasks where isConcluded = 1 and taskId >= ? -10 and taskId < ? LIMIT 10"
 
-    db.query(SQL, [taskId], (err, result) => {
-        if (err) console.log(err)
-        else res.send(result)
+   
+    if(userGroup === 'admin'){
+ 
+        db.query(SQL, [taskId, taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }else{
 
-        // console.log(taskId)
-    })
+        SQL = "SELECT * from tasks where isConcluded = 1 and userId = ? and taskId >= ? -10 and taskId < ? LIMIT 10"
+
+        db.query(SQL, [userId, taskId, taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+    
+            // console.log(taskId)
+        })
+    }
 })
 
 app.post("/registeruser", (req, res) => {
