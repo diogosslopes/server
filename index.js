@@ -297,16 +297,30 @@ app.post("/getUnitsTasks", (req, res) => {
     })
 })
 
+app.get("/getPages", (req, res) => {
+
+    const SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks"
+
+    db.query(SQL, (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.post("/getNextTasks", (req, res) => {
 
-    const { taskId } = req.body
+    const { actualPage } = req.body
     const { userGroup } = req.body
     const { userId } = req.body
 
-    let SQL = "SELECT * from tasks where isConcluded = 0 and taskId > ? LIMIT 10"
+    const offset = actualPage * 10
+
+    console.log(actualPage, offset)
+
+    let SQL = "select * from tasks where isConcluded = 0 limit 10 OFFSET ?"
 
     if(userGroup === 'admin'){
-        db.query(SQL, [taskId], (err, result) => {
+        db.query(SQL, [offset], (err, result) => {
             if (err) console.log(err)
             else res.send(result)
     
@@ -314,9 +328,9 @@ app.post("/getNextTasks", (req, res) => {
         })
     }else{
 
-        SQL = "SELECT * from tasks where isConcluded = 0 and userId = ? and taskId > ? LIMIT 10"
+        SQL = "select * from tasks where isConcluded = 0 and userId = ? limit 10 OFFSET ?"
 
-        db.query(SQL, [userId, taskId], (err, result) => {
+        db.query(SQL, [userId, offset], (err, result) => {
             if (err) console.log(err)
             else res.send(result)
     
