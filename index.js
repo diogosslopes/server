@@ -297,32 +297,93 @@ app.post("/getUnitsTasks", (req, res) => {
     })
 })
 
+app.post("/getFiltredPages", (req, res) => {
+
+    const { type } = req.body
+    const { table } = req.body
+
+    let SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 0 and type = ?"
+
+    if(table === 'completedtasks'){
+
+        SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 1 and type = ?"
+    }
+
+    console.log(SQL)
+
+    db.query(SQL, [type], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.get("/getPages", (req, res) => {
+
+    const SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 0"
+
+    db.query(SQL, (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.post("/getNextTasks", (req, res) => {
 
-    const { taskId } = req.body
+    const { actualPage } = req.body
     const { userGroup } = req.body
     const { userId } = req.body
+    const { filtred } = req.body
+    const { type } = req.body
 
-    let SQL = "SELECT * from tasks where isConcluded = 0 and taskId > ? LIMIT 10"
+    const offset = actualPage * 10
 
-    if(userGroup === 'admin'){
-        db.query(SQL, [taskId], (err, result) => {
-            if (err) console.log(err)
-            else res.send(result)
-    
-            // console.log(taskId)
-        })
-    }else{
 
-        SQL = "SELECT * from tasks where isConcluded = 0 and userId = ? and taskId > ? LIMIT 10"
 
-        db.query(SQL, [userId, taskId], (err, result) => {
-            if (err) console.log(err)
-            else res.send(result)
-    
-            // console.log(taskId)
-        })
+    if (filtred === false) {
+        let SQL = "select * from tasks where isConcluded = 0 limit 10 OFFSET ?"
+        if (userGroup === 'admin') {
+            db.query(SQL, [offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        } else {
+
+            SQL = "select * from tasks where isConcluded = 0 and userId = ? limit 10 OFFSET ?"
+
+            db.query(SQL, [userId, offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        }
+
+
+    } else {
+
+        let SQL = `select * from tasks where isConcluded = 0 and type = '${type}' limit 10 OFFSET ?`
+        if (userGroup === 'admin') {
+            db.query(SQL, [offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        } else {
+
+            SQL = `select * from tasks where isConcluded = 0 and userId = ? and type = '${type}' limit 10 OFFSET ?`
+
+            db.query(SQL, [userId, offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        }
     }
+
 })
 
 app.post("/getPreviousTasks", (req, res) => {
@@ -333,55 +394,85 @@ app.post("/getPreviousTasks", (req, res) => {
 
     let SQL = "SELECT * from tasks where isConcluded = 0 and taskId >= ? -10 and taskId < ? LIMIT 10"
 
-   
-    if(userGroup === 'admin'){
- 
+
+    if (userGroup === 'admin') {
+
         db.query(SQL, [taskId, taskId], (err, result) => {
             if (err) console.log(err)
             else res.send(result)
-    
+
             // console.log(taskId)
         })
-    }else{
+    } else {
 
         SQL = "SELECT * from tasks where isConcluded = 0 and userId = ? and taskId >= ? -10 and taskId < ? LIMIT 10"
 
         db.query(SQL, [userId, taskId, taskId], (err, result) => {
             if (err) console.log(err)
             else res.send(result)
-    
+
             // console.log(taskId)
         })
     }
-   
+
 
 })
 
 app.post("/getNextCompletedTasks", (req, res) => {
 
-    const { taskId } = req.body
+    const { actualPage } = req.body
     const { userGroup } = req.body
     const { userId } = req.body
+    const { filtred } = req.body
+    const { type } = req.body
 
-    let SQL = "SELECT * from tasks where isConcluded = 1 and taskId > ? LIMIT 10"
+    const offset = actualPage * 10
 
-    if(userGroup === 'admin'){
-        db.query(SQL, [taskId], (err, result) => {
-            if (err) console.log(err)
-            else res.send(result)
-    
-            // console.log(taskId)
-        })
-    }else{
 
-        SQL = "SELECT * from tasks where isConcluded = 1 and userId = ? and taskId > ? LIMIT 10"
 
-        db.query(SQL, [userId, taskId], (err, result) => {
-            if (err) console.log(err)
-            else res.send(result)
-    
-            // console.log(taskId)
-        })
+    if (filtred === false) {
+        let SQL = "select * from tasks where isConcluded = 1 limit 10 OFFSET ?"
+        if (userGroup === 'admin') {
+            db.query(SQL, [offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        } else {
+
+            SQL = "select * from tasks where isConcluded = 1 and userId = ? limit 10 OFFSET ?"
+
+            db.query(SQL, [userId, offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        }
+
+
+    } else {
+
+        let SQL = `select * from tasks where isConcluded = 1 and type = '${type}' limit 10 OFFSET ?`
+        if (userGroup === 'admin') {
+            db.query(SQL, [offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        } else {
+
+            SQL = `select * from tasks where isConcluded = 1 and userId = ? and type = '${type}' limit 10 OFFSET ?`
+
+            db.query(SQL, [userId, offset], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+
+                // console.log(taskId)
+            })
+        }
     }
 })
 
@@ -393,23 +484,23 @@ app.post("/getPreviousCompletedTasks", (req, res) => {
 
     let SQL = "SELECT * from tasks where isConcluded = 1 and taskId >= ? -10 and taskId < ? LIMIT 10"
 
-   
-    if(userGroup === 'admin'){
- 
+
+    if (userGroup === 'admin') {
+
         db.query(SQL, [taskId, taskId], (err, result) => {
             if (err) console.log(err)
             else res.send(result)
-    
+
             // console.log(taskId)
         })
-    }else{
+    } else {
 
         SQL = "SELECT * from tasks where isConcluded = 1 and userId = ? and taskId >= ? -10 and taskId < ? LIMIT 10"
 
         db.query(SQL, [userId, taskId, taskId], (err, result) => {
             if (err) console.log(err)
             else res.send(result)
-    
+
             // console.log(taskId)
         })
     }
@@ -574,17 +665,27 @@ app.post("/searchtask", (req, res) => {
     })
 })
 
-app.post("/filtertask", (req, res) => {
+app.post("/filterTasks", (req, res) => {
     const { type } = req.body
     const { table } = req.body
 
-    let SQL = "select * from completedtasks where type = ?"
+    let SQL = "select * from tasks where isConcluded = 0 and type = ? limit 10"
+
+    if (table === 'tasks') {
+        db.query(SQL, [type], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+        })
+
+    } else {
+        SQL = "select * from tasks where isConcluded = 1 and type = ? limit 10"
+        db.query(SQL, [type], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+        })
+    }
 
 
-    db.query(SQL, [type], (err, result) => {
-        if (err) console.log(err)
-        else res.send(result)
-    })
 })
 
 app.post("/orderBy", (req, res) => {
