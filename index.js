@@ -50,70 +50,77 @@ app.post("/getReport", (req, res) => {
     const { unity } = req.body
     const { caseNumber } = req.body
 
-    let SQL = 'select * from tasks where type = ? and status = ? and client = ?'
+    let SQL = 'select * from tasks where type = ? and status = ? and client = ? and created between ? and ?'
 
     switch (caseNumber) {
         case 1:
 
-            db.query(SQL, [taskType, status, unity], (err, result) => {
+            db.query(SQL, [taskType, status, unity, dateIni, dateFin], (err, result) => {
                 if (err) console.log(err)
                 else res.send(result)
             })
             break
 
         case 2:
-            SQL = 'select * from tasks where type = ? and client = ?'
+            SQL = 'select * from tasks where type = ? and client = ? and created between ? and ?'
 
-            db.query(SQL, [taskType, unity], (err, result) => {
+            db.query(SQL, [taskType, unity, dateIni, dateFin], (err, result) => {
                 if (err) console.log(err)
                 else res.send(result)
             })
             break
 
         case 3:
-            SQL = 'select * from tasks where client = ? and status = ?'
+            SQL = 'select * from tasks where client = ? and status = ? and created between ? and ?'
 
-            db.query(SQL, [unity, status], (err, result) => {
+            db.query(SQL, [unity, status, dateIni, dateFin], (err, result) => {
                 if (err) console.log(err)
                 else res.send(result)
             })
             break
 
         case 4:
-            SQL = 'select * from tasks where type = ? and status = ?'
+            SQL = 'select * from tasks where type = ? and status = ? and created between ? and ?'
 
-            db.query(SQL, [taskType, status], (err, result) => {
+            db.query(SQL, [taskType, status, dateIni, dateFin], (err, result) => {
                 if (err) console.log(err)
                 else res.send(result)
             })
             break
 
         case 5:
-            SQL = 'select * from tasks where client = ?'
+            SQL = 'select * from tasks where client = ? and created between ? and ?'
 
-            db.query(SQL, [unity], (err, result) => {
+            db.query(SQL, [unity, dateIni, dateFin], (err, result) => {
                 if (err) console.log(err)
                 else res.send(result)
             })
             break
 
         case 6:
-            SQL = 'select * from tasks where status = ?'
+            SQL = 'select * from tasks where status = ? and created between ? and ?'
 
-            db.query(SQL, [status], (err, result) => {
+            db.query(SQL, [status, dateIni, dateFin], (err, result) => {
                 if (err) console.log(err)
                 else res.send(result)
             })
             break
 
         case 7:
-            SQL = 'select * from tasks where type = ?'
+            SQL = 'select * from tasks where type = ? and created between ? and ?'
 
-            db.query(SQL, [taskType], (err, result) => {
+            db.query(SQL, [taskType, dateIni, dateFin], (err, result) => {
                 if (err) console.log(err)
                 else res.send(result)
             })
             break
+        default:
+            SQL = 'select * from tasks where created between ? and ?'
+
+            db.query(SQL, [dateIni, dateFin], (err, result) => {
+                if (err) console.log(err)
+                else res.send(result)
+            })
     }
 
     // const SQL = 'select * from tasks where taskType = ? and status = ? and unity = ?'
@@ -806,7 +813,7 @@ app.put("/editTaskConcluded", (req, res) => {
     const { concluded } = req.body
 
 
-    let SQL = "update tasks set isConcluded = 1, concluded = ? where taskId = ? "
+    let SQL = "update tasks set isConcluded = 1, status = 'Fechado', concluded = ? where taskId = ? "
 
     db.query(SQL, [concluded, taskId], (err, result) => {
         if (err) console.log(err)
