@@ -1004,3 +1004,17 @@ app.delete("/deleteSubject/:id", (req, res) => {
         else res.send(result)
     })
 })
+
+app.put("/evaluateTask", (req, res) => {
+    const { taskId } = req.body
+    const { comment } = req.body
+    const { grade } = req.body
+
+
+    let SQL = "update tasks set isConcluded = 1, comment = ?, grade = ? where taskId = ? "
+
+    db.query(SQL, [comment, grade, taskId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
