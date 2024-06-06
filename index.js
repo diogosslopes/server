@@ -1011,7 +1011,7 @@ app.put("/evaluateTask", (req, res) => {
     const { grade } = req.body
 
 
-    let SQL = "update tasks set isConcluded = 1, comment = ?, grade = ? where taskId = ? "
+    let SQL = "update tasks set status = 'Fechado', isConcluded = 1, comment = ?, grade = ? where taskId = ? "
 
     db.query(SQL, [comment, grade, taskId], (err, result) => {
         if (err) console.log(err)
