@@ -34,12 +34,38 @@ app.use(cors())
 
 app.use(express.json())
 
+app.post("/getGrades", (req, res) => {
+
+    const { userId } = req.body
+
+    console.log(userId)
+    const SQL = "SELECT AVG(grade) AS media FROM tasks where isConcluded = '1' and responsable = ?"
+
+    db.query(SQL, [userId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.post("/editGrade", (req, res) => {
+
+    const { userId } = req.body
+    const { grade } = req.body
+
+    const SQL = "update users set grade = ? where clientId = ?"
+
+    db.query(SQL, [grade, userId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
 
 app.get("/", (req, res) => {
 
     res.send("Hello Wolrd")
 
 })
+
 
 app.post("/getReport", (req, res) => {
 
@@ -289,6 +315,21 @@ app.get("/getTasks", (req, res) => {
     })
 })
 
+app.post("/getCompletedUnitsTasks", (req, res) => {
+
+    const { userId } = req.body
+
+    let SQL = "SELECT * from tasks where isConcluded != 0 and userId = ? LIMIT 10"
+
+    db.query(SQL, [userId], (err, result) => {
+        if (err) console.log(err)
+        else {
+            console.log("TASK")
+            res.send(result)
+        }
+    })
+})
+
 app.post("/getUnitsTasks", (req, res) => {
 
     const { userId } = req.body
@@ -311,7 +352,7 @@ app.post("/getFiltredPages", (req, res) => {
 
     let SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 0 and type = ?"
 
-    if(table === 'completedtasks'){
+    if (table === 'completedtasks') {
 
         SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 1 and type = ?"
     }
@@ -319,6 +360,16 @@ app.post("/getFiltredPages", (req, res) => {
     console.log(SQL)
 
     db.query(SQL, [type], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.get("/getCompletedPages", (req, res) => {
+
+    const SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded != 0"
+
+    db.query(SQL, (err, result) => {
         if (err) console.log(err)
         else res.send(result)
     })
@@ -438,7 +489,7 @@ app.post("/getNextCompletedTasks", (req, res) => {
 
 
     if (filtred === false) {
-        let SQL = "select * from tasks where isConcluded = 1 limit 10 OFFSET ?"
+        let SQL = "select * from tasks where isConcluded != 0 limit 10 OFFSET ?"
         if (userGroup === 'admin') {
             db.query(SQL, [offset], (err, result) => {
                 if (err) console.log(err)
@@ -448,7 +499,7 @@ app.post("/getNextCompletedTasks", (req, res) => {
             })
         } else {
 
-            SQL = "select * from tasks where isConcluded = 1 and userId = ? limit 10 OFFSET ?"
+            SQL = "select * from tasks where isConcluded != 0 and userId = ? limit 10 OFFSET ?"
 
             db.query(SQL, [userId, offset], (err, result) => {
                 if (err) console.log(err)
@@ -461,7 +512,7 @@ app.post("/getNextCompletedTasks", (req, res) => {
 
     } else {
 
-        let SQL = `select * from tasks where isConcluded = 1 and type = '${type}' limit 10 OFFSET ?`
+        let SQL = `select * from tasks where isConcluded != 0 and type = '${type}' limit 10 OFFSET ?`
         if (userGroup === 'admin') {
             db.query(SQL, [offset], (err, result) => {
                 if (err) console.log(err)
@@ -471,7 +522,7 @@ app.post("/getNextCompletedTasks", (req, res) => {
             })
         } else {
 
-            SQL = `select * from tasks where isConcluded = 1 and userId = ? and type = '${type}' limit 10 OFFSET ?`
+            SQL = `select * from tasks where isConcluded != 0 and userId = ? and type = '${type}' limit 10 OFFSET ?`
 
             db.query(SQL, [userId, offset], (err, result) => {
                 if (err) console.log(err)
@@ -513,6 +564,28 @@ app.post("/getPreviousCompletedTasks", (req, res) => {
     }
 })
 
+app.post("/getEvaluationTasks", (req, res) => {
+    const { userId } = req.body
+    const { userGroup } = req.body
+
+    let SQL = "select * from tasks where isConcluded = 2"
+
+    if (userGroup === 'admin') {
+        db.query(SQL, (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+        })
+    } else {
+        SQL = "select * from tasks where isConcluded = 2 and userId = ?"
+
+        db.query(SQL, [userId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+        })
+    }
+
+})
+
 app.post("/registeruser", (req, res) => {
     const { name } = req.body
     const { email } = req.body
@@ -550,7 +623,6 @@ app.post("/registeruser", (req, res) => {
         }
     })
 })
-
 
 app.post("/updateUser", (req, res) => {
     const { avatar } = req.body
@@ -780,7 +852,7 @@ app.get("/getLastTask", (req, res) => {
 
 app.get("/getCompletedTasks", (req, res) => {
 
-    let SQL = "SELECT * from tasks where isConcluded = 1 LIMIT 10"
+    let SQL = "SELECT * from tasks where isConcluded != 0 LIMIT 10"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
@@ -813,7 +885,23 @@ app.put("/editTaskConcluded", (req, res) => {
     const { concluded } = req.body
 
 
-    let SQL = "update tasks set isConcluded = 1, status = 'Fechado', concluded = ? where taskId = ? "
+    let SQL = "update tasks set isConcluded = 1, status = 'Fechado', where taskId = ? "
+
+    db.query(SQL, [taskId], (err, result) => {
+        if (err) console.log(err)
+        else {
+            res.send(result)
+            console.log("ok")
+        }
+    })
+})
+
+app.put("/concludeTask", (req, res) => {
+    const { taskId } = req.body
+    const { concluded } = req.body
+
+
+    let SQL = "update tasks set isConcluded = 2, status = 'Aguardando Avaliação', concluded = ? where taskId = ? "
 
     db.query(SQL, [concluded, taskId], (err, result) => {
         if (err) console.log(err)
@@ -953,6 +1041,20 @@ app.delete("/deleteSubject/:id", (req, res) => {
     console.log(id)
 
     db.query(SQL, [id], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.put("/evaluateTask", (req, res) => {
+    const { taskId } = req.body
+    const { comment } = req.body
+    const { grade } = req.body
+
+
+    let SQL = "update tasks set status = 'Fechado', isConcluded = 1, comment = ?, grade = ? where taskId = ? "
+
+    db.query(SQL, [comment, grade, taskId], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
     })
