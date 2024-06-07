@@ -34,12 +34,38 @@ app.use(cors())
 
 app.use(express.json())
 
+app.post("/getGrades", (req, res) => {
+
+    const { userId } = req.body
+
+    console.log(userId)
+    const SQL = "SELECT AVG(grade) AS media FROM tasks where isConcluded = '1' and responsable = ?"
+
+    db.query(SQL, [userId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.post("/editGrade", (req, res) => {
+
+    const { userId } = req.body
+    const { grade } = req.body
+
+    const SQL = "update users set grade = ? where clientId = ?"
+
+    db.query(SQL, [grade, userId], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
 
 app.get("/", (req, res) => {
 
     res.send("Hello Wolrd")
 
 })
+
 
 app.post("/getReport", (req, res) => {
 
@@ -289,6 +315,21 @@ app.get("/getTasks", (req, res) => {
     })
 })
 
+app.post("/getCompletedUnitsTasks", (req, res) => {
+
+    const { userId } = req.body
+
+    let SQL = "SELECT * from tasks where isConcluded != 0 and userId = ? LIMIT 10"
+
+    db.query(SQL, [userId], (err, result) => {
+        if (err) console.log(err)
+        else {
+            console.log("TASK")
+            res.send(result)
+        }
+    })
+})
+
 app.post("/getUnitsTasks", (req, res) => {
 
     const { userId } = req.body
@@ -311,7 +352,7 @@ app.post("/getFiltredPages", (req, res) => {
 
     let SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 0 and type = ?"
 
-    if(table === 'completedtasks'){
+    if (table === 'completedtasks') {
 
         SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 1 and type = ?"
     }
@@ -528,18 +569,18 @@ app.post("/getEvaluationTasks", (req, res) => {
     const { userGroup } = req.body
 
     let SQL = "select * from tasks where isConcluded = 2"
-    
-    if(userGroup === 'admin'){
+
+    if (userGroup === 'admin') {
         db.query(SQL, (err, result) => {
             if (err) console.log(err)
-                else res.send(result)
+            else res.send(result)
         })
-    }else{
+    } else {
         SQL = "select * from tasks where isConcluded = 2 and userId = ?"
-        
+
         db.query(SQL, [userId], (err, result) => {
             if (err) console.log(err)
-                else res.send(result)
+            else res.send(result)
         })
     }
 
