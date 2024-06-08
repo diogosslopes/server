@@ -914,16 +914,17 @@ app.put("/concludeTask", (req, res) => {
 
 app.put("/editTask", (req, res) => {
     const { taskId } = req.body
-    const { userId } = req.body
     const { client } = req.body
     const { priority } = req.body
     const { subject } = req.body
     const { status } = req.body
     const { type } = req.body
+    const { responsable } = req.body
 
-    let SQL = "update tasks set client = ?, priority = ?, subject = ?, status = ?, type = ? where taskId = ? "
+    let SQL = "update tasks set client = ?, priority = ?, subject = ?, status = ?, type = ?, responsable = ? where taskId = ? "
 
-    db.query(SQL, [client, priority, subject, status, type, taskId], (err, result) => {
+
+    db.query(SQL, [client, priority, subject, status, type, responsable, taskId], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
     })
