@@ -6,28 +6,28 @@ const bcrypt = require("bcrypt")
 const saltRounds = 10
 
 
- const db = mysql.createPool({
-     host: "186.202.152.33",
-     user: "chamadost3ste",
-     password: "Centr0#3127",
-     database: "chamadost3ste"
- })
+const db = mysql.createPool({
+    host: "186.202.152.33",
+    user: "chamadost3ste",
+    password: "Centr0#3127",
+    database: "chamadost3ste"
+})
 
 
 app.listen(3002, () => {
-     console.log("Rodandooo")
- })
+    console.log("Rodandooo")
+})
 
 
 // const db = mysql.createPool({
-   // host: "179.188.16.167",
-    // user: "chamadosfacil",
-    // password: "Centr0#3127",
-    // database: "chamadosfacil"
+// host: "179.188.16.167",
+// user: "chamadosfacil",
+// password: "Centr0#3127",
+// database: "chamadosfacil"
 // })
 
 // app.listen(3001, () => {
-   // console.log("Rodandooo")
+// console.log("Rodandooo")
 // })
 
 app.use(cors())
@@ -38,7 +38,6 @@ app.post("/getGrades", (req, res) => {
 
     const { userId } = req.body
 
-    console.log(userId)
     const SQL = "SELECT AVG(grade) AS media FROM tasks where isConcluded = '1' and responsable = ?"
 
     db.query(SQL, [userId], (err, result) => {
@@ -190,7 +189,6 @@ app.get("/getSubjects", (req, res) => {
 app.post("/registerTaskType", (req, res) => {
 
     const { taskType } = req.body
-    console.log(taskType)
 
     const SQL = "INSERT INTO taskTypes(taskType) VALUES(?)"
 
@@ -204,7 +202,6 @@ app.post("/registerStatus", (req, res) => {
 
     const { status } = req.body
 
-    console.log(status)
 
     const SQL = "INSERT INTO status (status) VALUES(?)"
 
@@ -219,7 +216,6 @@ app.post("/registerSubject", (req, res) => {
     const { subject } = req.body
     const { taskType } = req.body
 
-    console.log(subject)
 
     const SQL = "INSERT INTO subjects (subject, taskType) VALUES(?,?)"
 
@@ -233,7 +229,6 @@ app.post("/confirmUser", (req, res) => {
     const { email } = req.body
     const { emailToken } = req.body
 
-    console.log(email)
 
     let SQLCONFIRM = "update users set isVerified = 1 where email = ? "
     let SQL = "select emailToken from users where email = ?"
@@ -247,7 +242,6 @@ app.post("/confirmUser", (req, res) => {
                     db.query(SQLCONFIRM, [email], (err, resultVerified) => {
                         if (err) console.log(err)
                         else {
-                            console.log(resultVerified)
                             res.send(resultCompare)
                         }
                     })
@@ -271,8 +265,6 @@ app.post("/resendConfirmation", (req, res) => {
             db.query(SQL, [hash, email], (err, result) => {
                 if (err) console.log(err)
                 else {
-                    console.log(hash)
-                    console.log(emailToken)
                     res.send(result)
                 }
             })
@@ -293,7 +285,6 @@ app.post("/changePassword", (req, res) => {
             db.query(SQL, [hash, email], (err, result) => {
                 if (err) console.log("err2")
                 else {
-                    console.log(hash)
                     res.send(result)
                 }
             })
@@ -309,7 +300,6 @@ app.get("/getTasks", (req, res) => {
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
         else {
-            console.log("TASK")
             res.send(result)
         }
     })
@@ -324,7 +314,6 @@ app.post("/getCompletedUnitsTasks", (req, res) => {
     db.query(SQL, [userId], (err, result) => {
         if (err) console.log(err)
         else {
-            console.log("TASK")
             res.send(result)
         }
     })
@@ -339,7 +328,6 @@ app.post("/getUnitsTasks", (req, res) => {
     db.query(SQL, [userId], (err, result) => {
         if (err) console.log(err)
         else {
-            console.log("TASK")
             res.send(result)
         }
     })
@@ -357,7 +345,6 @@ app.post("/getFiltredPages", (req, res) => {
         SQL = "select  ceiling(count(*)/10) as 'pagina' from tasks where isConcluded = 1 and type = ?"
     }
 
-    console.log(SQL)
 
     db.query(SQL, [type], (err, result) => {
         if (err) console.log(err)
@@ -404,7 +391,6 @@ app.post("/getNextTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         } else {
 
@@ -414,7 +400,6 @@ app.post("/getNextTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         }
 
@@ -427,7 +412,6 @@ app.post("/getNextTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         } else {
 
@@ -437,7 +421,6 @@ app.post("/getNextTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         }
     }
@@ -459,7 +442,6 @@ app.post("/getPreviousTasks", (req, res) => {
             if (err) console.log(err)
             else res.send(result)
 
-            // console.log(taskId)
         })
     } else {
 
@@ -469,7 +451,6 @@ app.post("/getPreviousTasks", (req, res) => {
             if (err) console.log(err)
             else res.send(result)
 
-            // console.log(taskId)
         })
     }
 
@@ -495,7 +476,6 @@ app.post("/getNextCompletedTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         } else {
 
@@ -505,7 +485,6 @@ app.post("/getNextCompletedTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         }
 
@@ -518,7 +497,6 @@ app.post("/getNextCompletedTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         } else {
 
@@ -528,7 +506,6 @@ app.post("/getNextCompletedTasks", (req, res) => {
                 if (err) console.log(err)
                 else res.send(result)
 
-                // console.log(taskId)
             })
         }
     }
@@ -549,7 +526,6 @@ app.post("/getPreviousCompletedTasks", (req, res) => {
             if (err) console.log(err)
             else res.send(result)
 
-            // console.log(taskId)
         })
     } else {
 
@@ -559,7 +535,6 @@ app.post("/getPreviousCompletedTasks", (req, res) => {
             if (err) console.log(err)
             else res.send(result)
 
-            // console.log(taskId)
         })
     }
 })
@@ -601,18 +576,12 @@ app.post("/registeruser", (req, res) => {
         if (err) {
             console.log(err)
         } else {
-            console.log(result.length)
             if (result.length == 0) {
-                console.log(emailToken)
                 bcrypt.hash(password, saltRounds, (err, hash) => {
-                    console.log(password)
                     bcrypt.hash(emailToken, saltRounds, (err, hashToken) => {
-                        console.log(hash)
-                        console.log(hashToken)
                         db.query(SQLINSERT, [adress, email, name, hash, hashToken], (err, result) => {
                             if (err) console.log(err)
                             else res.send(result)
-                            // console.log(req.body)
                         })
                     })
 
@@ -696,7 +665,6 @@ app.post("/registertask", (req, res) => {
     const { userEmail } = req.body
     const { userId } = req.body
 
-    console.log(req.body)
 
     let SQL = "INSERT INTO tasks(client, created, obs, priority, status, subject, taskImages, type, userEmail, userId) VALUES(?,?,?,?,?,?,?,?,?,?)"
 
@@ -725,7 +693,6 @@ app.post("/completeTask", (req, res) => {
     db.query(SQL, [client, created, priority, status, subject, type, userEmail, userId, taskId, concluded], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
-        console.log(type)
     })
 })
 
@@ -777,12 +744,40 @@ app.post("/orderBy", (req, res) => {
     db.query(SQL, [order], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
-        console.log(SQL)
     })
 })
 
+app.post("/editStatus", (req, res) => {
+
+
+    const { taskId } = req.body
+    const { status } = req.body
+
+
+
+    if (status === 'Em Andamento' || status === 'Aberto') {
+        let SQLSTATUS = "update tasks set status = 'Pendencia Unidade' where taskId = ? "
+
+        db.query(SQLSTATUS, [taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+        })
+
+
+    } else if (status === 'Pendencia Unidade') {
+        let SQLSTATUS = "update tasks set status = 'Em Andamento' where taskId = ? "
+
+        db.query(SQLSTATUS, [taskId], (err, result) => {
+            if (err) console.log(err)
+            else res.send(result)
+        })
+
+
+    }
+
+})
+
 app.post("/registerobs", (req, res) => {
-    console.log(req.body)
     const { client } = req.body
     const { created } = req.body
     const { obs } = req.body
@@ -812,7 +807,6 @@ app.post("/searchObs", (req, res) => {
 })
 
 app.post("/registerImage", (req, res) => {
-    console.log(req.body)
     const { client } = req.body
     const { created } = req.body
     const { image } = req.body
@@ -891,7 +885,6 @@ app.put("/editTaskConcluded", (req, res) => {
         if (err) console.log(err)
         else {
             res.send(result)
-            console.log("ok")
         }
     })
 })
@@ -907,7 +900,6 @@ app.put("/concludeTask", (req, res) => {
         if (err) console.log(err)
         else {
             res.send(result)
-            console.log("ok")
         }
     })
 })
@@ -1017,7 +1009,6 @@ app.delete("/deleteClient/:clientId", (req, res) => {
 app.delete("/deleteTaskType/:id", (req, res) => {
     const { id } = req.params
     let SQL = "delete from taskTypes where id = ?"
-    console.log(id)
 
     db.query(SQL, [id], (err, result) => {
         if (err) console.log(err)
@@ -1028,7 +1019,6 @@ app.delete("/deleteTaskType/:id", (req, res) => {
 app.delete("/deleteStatus/:id", (req, res) => {
     const { id } = req.params
     let SQL = "delete from status where id = ?"
-    console.log(id)
 
     db.query(SQL, [id], (err, result) => {
         if (err) console.log(err)
@@ -1039,7 +1029,6 @@ app.delete("/deleteStatus/:id", (req, res) => {
 app.delete("/deleteSubject/:id", (req, res) => {
     const { id } = req.params
     let SQL = "delete from subjects where id = ?"
-    console.log(id)
 
     db.query(SQL, [id], (err, result) => {
         if (err) console.log(err)
